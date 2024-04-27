@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:physicstool/pages/home_page.dart';
+import 'package:physicstool/pages/login_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -13,7 +14,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: HomePage(),
+      home: LoginPage(),
     );
   }
 }
