@@ -6,11 +6,22 @@ import 'package:physicstool/screens/grid_screen.dart';
 import 'package:physicstool/screens/text_screen.dart';
 
 class UserPage extends StatelessWidget {
-  final String text = FirestoreService().retrieveText() as String;
+  final Future<String> text = FirestoreService().retrieveText();
 
   @override
   Widget build(BuildContext context) {
-    return FullHeightTextPage(text: text);
+    return FutureBuilder<String>(
+      future: text,
+      builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return CircularProgressIndicator();
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else {
+          return FullHeightTextPage(text: snapshot.data!);
+        }
+      },
+    );
   }
 }
 
