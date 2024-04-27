@@ -94,7 +94,7 @@ class _GridPageState extends State<GridPage> {
                         child: Center(
                           child: Text(
                             containerTexts[index],
-                            style: TextStyle(
+                            style: const TextStyle(
                               color: Colors.black,
                             ),
                           ),
