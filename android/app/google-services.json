@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "255382565242",
+    "project_id": "tt007-projekt",
+    "storage_bucket": "tt007-projekt.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:255382565242:android:fba679c44363d71c68a6c3",
+        "android_client_info": {
+          "package_name": "com.example.physicstool"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDEUnjonilXIuU7Tnmfc-whrY8RIOc3U9Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
