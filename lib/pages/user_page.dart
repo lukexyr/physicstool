@@ -2,8 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:physicstool/Firebase/firestore_service.dart';
-import 'package:physicstool/screens/grid_screen.dart';
-import 'package:physicstool/screens/text_screen.dart';
 
 class UserPage extends StatelessWidget {
   final Future<String> text =
@@ -48,13 +46,13 @@ class FullHeightTextPage extends StatelessWidget {
   final String text;
   final List<Map<String, dynamic>> missingWords;
 
-  FullHeightTextPage({required this.text, required this.missingWords});
+  const FullHeightTextPage(
+      {super.key, required this.text, required this.missingWords});
 
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    double horizontalPadding =
-        screenWidth / 6; // Change padding to 1/6 of screen width
+    double horizontalPadding = screenWidth / 6;
     double verticalPadding = 20.0;
     double textSize = 24.0;
 
@@ -62,17 +60,16 @@ class FullHeightTextPage extends StatelessWidget {
 
     return Scaffold(
       body: Column(
-        // Use Column instead of Row
         children: [
           Expanded(
-            flex: 2, // Text takes 2/3 of available space
+            flex: 2,
             child: Padding(
               padding: EdgeInsets.symmetric(
                   horizontal: horizontalPadding, vertical: verticalPadding),
               child: SingleChildScrollView(
                 child: Wrap(
-                  spacing: 8.0, // gap between adjacent chips
-                  runSpacing: 4.0, // gap between lines
+                  spacing: 8.0,
+                  runSpacing: 15.0,
                   children: words.asMap().entries.map((entry) {
                     int index = entry.key;
                     String word = entry.value;
@@ -83,7 +80,7 @@ class FullHeightTextPage extends StatelessWidget {
                       return _DragTargetBox(
                           missingWord: missingWord,
                           textSize: textSize,
-                          index: index); // Pass index
+                          index: index);
                     }
                     return Text(word);
                   }).toList(),
@@ -92,19 +89,19 @@ class FullHeightTextPage extends StatelessWidget {
             ),
           ),
           Expanded(
-            flex: 1, // Target box takes 1/3 of available space
-            child: Container(
+            flex: 1,
+            child: SizedBox(
               width: 100,
               child: ListView(
                 children: List.generate(missingWords.length, (index) {
                   var missingWord = missingWords[index];
                   return Draggable<String>(
                     data: missingWord['Wort'],
-                    child: Text(missingWord['Wort']),
                     feedback: Material(
                       child: Text(missingWord['Wort']),
                     ),
-                    childWhenDragging: Text(''),
+                    childWhenDragging: const Text(''),
+                    child: Text(missingWord['Wort']),
                   );
                 }),
               ),
@@ -121,7 +118,7 @@ class _DragTargetBox extends StatefulWidget {
   final double textSize;
   final int index;
 
-  _DragTargetBox(
+  const _DragTargetBox(
       {required this.missingWord, required this.textSize, required this.index});
 
   @override
@@ -142,7 +139,7 @@ class _DragTargetBoxState extends State<_DragTargetBox> {
                 paddingWidth;
         double boxHeight = widget.textSize + 10;
         double maxWidth = constraints.maxWidth;
-        double minWidth = 50.0;
+        double minWidth = 70.0;
 
         if (currentWord != null && boxWidth < minWidth) {
           boxWidth = minWidth;
@@ -165,34 +162,34 @@ class _DragTargetBoxState extends State<_DragTargetBox> {
                     color: currentWord == null
                         ? Colors.black
                         : isCorrect
-                        ? Colors.green
-                        : Colors.red,
+                            ? Colors.green
+                            : Colors.red,
                   ),
                 ),
-                padding: EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(8.0),
                 child: Center(
                   child: currentWord == null
                       ? null
                       : Draggable<String>(
-                    data: currentWord,
-                    child: Text(
-                      currentWord!,
-                      textAlign: TextAlign.center,
-                    ),
-                    feedback: Material(
-                      child: Text(currentWord!),
-                    ),
-                    onDraggableCanceled: (velocity, offset) {
-                      setState(() {
-                        currentWord = null;
-                      });
-                    },
-                    onDragCompleted: () {
-                      setState(() {
-                        currentWord = null;
-                      });
-                    },
-                  ),
+                          data: currentWord,
+                          feedback: Material(
+                            child: Text(currentWord!),
+                          ),
+                          onDraggableCanceled: (velocity, offset) {
+                            setState(() {
+                              currentWord = null;
+                            });
+                          },
+                          onDragCompleted: () {
+                            setState(() {
+                              currentWord = null;
+                            });
+                          },
+                          child: Text(
+                            currentWord!,
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
                 ),
               ),
             );
