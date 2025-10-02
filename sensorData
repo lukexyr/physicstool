@@ -1,0 +1,77 @@
+import math
+import time
+import csv
+from datetime import datetime
+from mpu6050 import mpu6050
+
+# MPU6050 initialisieren
+sensor = mpu6050(0x68)
+
+# CSV-Datei erstellen
+filename = f"mpu6050_data_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
+csvfile = open(filename, 'w', newline='')
+writer = csv.writer(csvfile)
+
+# Header schreiben
+writer.writerow(['Zeit [s]',
+                 'Accel_X [m/s²]', 'Accel_Y [m/s²]', 'Accel_Z [m/s²]',
+                 'Gyro_X [°/s]', 'Gyro_Y [°/s]', 'Gyro_Z [°/s]',
+                 'Temp [°C]',
+                 'Roll [°]', 'Pitch [°]'])
+
+print(f"Aufzeichnung gestartet: {filename}")
+print("Drücke Ctrl+C zum Beenden")
+print("-" * 60)
+
+
+def berechne_winkel(accel_data):
+    """Berechnet Roll und Pitch aus den Beschleunigungsdaten"""
+    x = accel_data['x']
+    y = accel_data['y']
+    z = accel_data['z']
+
+    # Roll (Rotation um X-Achse)
+    roll = math.atan2(y, z) * 180 / math.pi
+
+    # Pitch (Rotation um Y-Achse)
+    pitch = math.atan2(-x, math.sqrt(y * y + z * z)) * 180 / math.pi
+
+    return roll, pitch
+
+
+try:
+    start_time = time.time()
+    while True:
+        timestamp = time.time() - start_time
+
+        # Sensorwerte holen
+        accel = sensor.get_accel_data()
+        gyro = sensor.get_gyro_data()
+        temp = sensor.get_temp()
+
+        # Winkel berechnen
+        roll, pitch = berechne_winkel(accel)
+
+        # In CSV schreiben
+        writer.writerow([
+            f"{timestamp:.3f}",
+            f"{accel['x']:.3f}", f"{accel['y']:.3f}", f"{accel['z']:.3f}",
+            f"{gyro['x']:.3f}", f"{gyro['y']:.3f}", f"{gyro['z']:.3f}",
+            f"{temp:.2f}",
+            f"{roll:.2f}", f"{pitch:.2f}"
+        ])
+
+        # Live-Ausgabe auf Konsole
+        print(
+            f"\r t={timestamp:6.2f}s | "
+            f"Accel [x={accel['x']:.2f}, y={accel['y']:.2f}, z={accel['z']:.2f}] m/s² | "
+            f"Gyro [x={gyro['x']:.2f}, y={gyro['y']:.2f}, z={gyro['z']:.2f}] °/s | "
+            f"T={temp:.1f}°C | Roll={roll:6.2f}° Pitch={pitch:6.2f}°",
+            end=''
+        )
+
+        time.sleep(0.1)  # 10 Hz Abtastrate
+
+except KeyboardInterrupt:
+    print(f"\n\nAufzeichnung beendet: {filename}")
+    csvfile.close()
